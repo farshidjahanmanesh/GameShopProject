@@ -12,5 +12,10 @@ namespace GameShopProject.Controllers
         {
             return View();
         }
+
+        public IActionResult ProductShow(int id)
+        {
+            return View();
+        }
     }
 }

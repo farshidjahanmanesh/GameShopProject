@@ -59,8 +59,14 @@ namespace GameShopProject
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name:"productShow",
+                    pattern:"Products/{id}/{name}",
+                    defaults:new {Controller="product",action= "productShow" }
+                    );
+
+                endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=product}/{action=Index}/{id?}");
             });
         }
     }

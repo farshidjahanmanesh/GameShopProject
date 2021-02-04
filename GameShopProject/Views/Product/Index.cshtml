@@ -1,0 +1,55 @@
+﻿@{ 
+    ViewBag.Title = "صفحه اصلی | سایت ما";
+    ViewBag.Description = "sas";
+    ViewBag.Keywords = "sas";
+}
+
+<div class="nk-gap-2"></div>
+<div class="container">
+
+    <div class="nk-image-slider" data-autoplay="8000">
+
+
+        <div class="nk-image-slider-item">
+            <img src="/images/slide-1.jpg" alt="" class="nk-image-slider-img" data-thumb="/images/slide-1-thumb.jpg">
+
+            <div class="nk-image-slider-content" style="opacity: 1;">
+
+                <h3 class="h4">بازی کامپیوتری</h3>
+                <p class="text-white">این یک متن تستی برای توضیحات این بنر است</p>
+                <a href="#" class="nk-btn nk-btn-rounded nk-btn-color-white nk-btn-hover-color-main-1">ادامه مطلب</a>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="nk-gap-2"></div>
+   @(await Component.InvokeAsync<ProductsViewComponent>())
+    <div class="nk-gap-2"></div>
+
+    <div class="row vertical-gap">
+        <div class="col-lg-4 nk-sidebar-sticky-parent">
+
+
+            @(await Component.InvokeAsync<BestViewerProductsViewComponent>())
+
+            @(await Component.InvokeAsync<BestArticlesViewComponent>())
+        </div>
+
+
+        <div class="col-lg-8">
+            <h3 class="nk-decorated-h-2"><span><span class="text-main-1">جدید ترین </span> مقالات</span></h3>
+            <div class="nk-gap"></div>
+           
+            @(await Component.InvokeAsync<LastArticlesViewComponent>())
+
+            <div class="nk-gap-3"></div>
+            <h3 class="nk-decorated-h-2"><span><span class="text-main-1">جدید ترین</span> اخبار</span></h3>
+
+            @(await Component.InvokeAsync<LastNewsViewComponent>())
+
+        </div>
+
+    </div>
+</div>

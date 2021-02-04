@@ -1,0 +1,22 @@
+﻿@model List<ProductIndexPageDetailDto>
+
+<div class="nk-widget nk-widget-highlighted">
+    <h4 class="nk-widget-title"><span><span class="text-main-1">پر بازدید</span> ترین ها</span></h4>
+    <div class="nk-widget-content">
+        @foreach (var item in Model)
+        {
+            <div class="nk-widget-post">
+                <a asp-route="productShow" asp-route-id="@item.Id"
+                   asp-Route-name="@item.Slug" class="nk-post-image">
+                    <img src="/images/@item.Picture" alt="@item.Slug">
+                </a>
+                <h3 class="nk-post-title"><a asp-route="productShow" asp-route-id="@item.Id"
+                   asp-Route-name="@item.Slug">@item.Name</a></h3>
+                <div class="nk-product-price">ريال @item.Price</div>
+            </div>
+        }
+
+
+
+    </div>
+</div>

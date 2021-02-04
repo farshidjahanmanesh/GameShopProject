@@ -44,12 +44,32 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("CardDetail");
                 });
 
+            modelBuilder.Entity("Entities.Entities.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category");
+                });
+
             modelBuilder.Entity("Entities.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<int>("Classification")
+                        .HasColumnType("int");
 
                     b.Property<string>("Detail")
                         .IsRequired()
@@ -72,9 +92,40 @@ namespace DataAccessLayer.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
+                    b.Property<DateTime>("PublicationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Summery")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Product");
+                });
+
+            modelBuilder.Entity("Entities.Entities.ProductCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("Categoryid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Categoryid");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCategory");
                 });
 
             modelBuilder.Entity("Entities.Entities.ProductComment", b =>
@@ -120,6 +171,28 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("ProductComment");
                 });
 
+            modelBuilder.Entity("Entities.Entities.ProductTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tagid")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("Tagid");
+
+                    b.ToTable("ProductTag");
+                });
+
             modelBuilder.Entity("Entities.Entities.ShopCard", b =>
                 {
                     b.Property<int>("Id")
@@ -136,6 +209,23 @@ namespace DataAccessLayer.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ShopCard");
+                });
+
+            modelBuilder.Entity("Entities.Entities.Tag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("TagName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Entities.Entities.User", b =>
@@ -423,6 +513,25 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Entities.Entities.ProductCategory", b =>
+                {
+                    b.HasOne("Entities.Entities.Category", "Category")
+                        .WithMany("ProductCategorys")
+                        .HasForeignKey("Categoryid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Entities.Product", "Product")
+                        .WithMany("ProductCategorys")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Entities.Entities.ProductComment", b =>
                 {
                     b.HasOne("Entities.Entities.ProductComment", "ParentComment")
@@ -440,6 +549,25 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("ParentComment");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Entities.Entities.ProductTag", b =>
+                {
+                    b.HasOne("Entities.Entities.Product", "Product")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Entities.Entities.Tag", "Tag")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("Tagid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("Entities.Entities.User", b =>
@@ -521,9 +649,18 @@ namespace DataAccessLayer.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Entities.Entities.Category", b =>
+                {
+                    b.Navigation("ProductCategorys");
+                });
+
             modelBuilder.Entity("Entities.Entities.Product", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("ProductCategorys");
+
+                    b.Navigation("ProductTags");
                 });
 
             modelBuilder.Entity("Entities.Entities.ProductComment", b =>
@@ -536,6 +673,11 @@ namespace DataAccessLayer.Migrations
                     b.Navigation("CardDetails");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Entities.Entities.Tag", b =>
+                {
+                    b.Navigation("ProductTags");
                 });
 
             modelBuilder.Entity("Entities.Entities.Wallet", b =>

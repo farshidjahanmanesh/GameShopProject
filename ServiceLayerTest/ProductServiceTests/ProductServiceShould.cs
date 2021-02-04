@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Entities.Entities;
+using KellermanSoftware.CompareNetObjects;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using ServiceLayer.Dtos.ProductDtos;
@@ -83,7 +84,10 @@ namespace ServiceLayerTest.ProductServiceTests
             var mapper = InfrastructureFunctions.GetMapperInstance();
             ProductService productService = new ProductService(DbContext, mapper);
             var result=await productService.GetByAsync(1);
-            Assert.Equal(DbContext.Set<Product>().FirstAsync(c=>c.Id==1).Result, result);
+            var mapperOrginalObject = mapper.Map<GetAllProductDto>(DbContext.Set<Product>().FirstAsync(c => c.Id == 1).Result);
+            CompareLogic compareLogic = new CompareLogic();
+            var resultComparer=compareLogic.Compare(mapperOrginalObject, result);
+            Assert.True(resultComparer.AreEqual);
         }
         [Fact]
         public async void GetProductByWrongId()
@@ -100,7 +104,10 @@ namespace ServiceLayerTest.ProductServiceTests
             var mapper = InfrastructureFunctions.GetMapperInstance();
             ProductService productService = new ProductService(DbContext, mapper);
             var result=await productService.GetByAsync("xxxxx");
-            Assert.Equal(DbContext.Set<Product>().FirstOrDefaultAsync(c => c.Name == "xxxxx").Result, result);
+            var mapperOrginalObject = mapper.Map<GetAllProductDto>( DbContext.Set<Product>().FirstOrDefaultAsync(c => c.Name == "xxxxx").Result);
+            var comparerLogic = new CompareLogic();
+            var resultComparer = comparerLogic.Compare(result, mapperOrginalObject);
+            Assert.True(resultComparer.AreEqual);
         }
         [Fact]
         public async void GetProductWithWrongName()
@@ -131,6 +138,18 @@ namespace ServiceLayerTest.ProductServiceTests
             var productDto = mapper.Map<Product, UpdateProductDto>(product);
             var productDtoResult = productService.Update(productDto, true);
             Assert.Equal(productDto, productDtoResult);
+        }
+
+        [Fact]
+        public async void CheckResultTypeOfGetProductForIndexPageMethod()
+        {
+            var mapper = InfrastructureFunctions.GetMapperInstance();
+            ProductService productService = new ProductService(DbContext, mapper);
+            AddSampleProducts();
+            var result =await productService.GetProductForIndexPage();
+            Assert.IsType<List<ProductIndexPageDetailDto>>(await productService.GetProductForIndexPage());
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
         }
         private Product AddSampleProduct()
         {

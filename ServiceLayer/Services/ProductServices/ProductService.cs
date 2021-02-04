@@ -16,8 +16,9 @@ namespace ServiceLayer.Services.ProductServices
     public interface IProductService : IBaseAsyncRepository<RemoveProductDto
         ,GetAllProductDto,UpdateProductDto,InsertProductDto,int>
     {
-        Task<Product> GetByAsync(int id);
-        Task<Product> GetByAsync(string name);
+        Task<GetAllProductDto> GetByAsync(int id);
+        Task<GetAllProductDto> GetByAsync(string name);
+        Task<List<ProductIndexPageDetailDto>> GetProductForIndexPage();
     }
     public class ProductService : IProductService
     {
@@ -38,14 +39,31 @@ namespace ServiceLayer.Services.ProductServices
             return productDtoList;
         }
 
-        public async Task<Product> GetByAsync(int id)
+        public async Task<GetAllProductDto> GetByAsync(int id)
         {
-            return await products.FirstOrDefaultAsync(c => c.Id == id);
+            var product = await products.FirstOrDefaultAsync(c => c.Id == id);
+            var productDto = mapper.Map<GetAllProductDto>(product);
+            return productDto;
         }
 
-        public async Task<Product> GetByAsync(string name)
+        public async Task<GetAllProductDto> GetByAsync(string name)
         {
-            return await products.FirstOrDefaultAsync(c => c.Name.ToLower() == name);
+            var product = await products.FirstOrDefaultAsync(c => c.Name.ToLower() == name);
+            var productDto = mapper.Map<GetAllProductDto>(product);
+            return productDto;
+        }
+
+        public async Task<List<ProductIndexPageDetailDto>> GetProductForIndexPage()
+        {
+            var productsList =await products.Select(c=> new Product{
+            Id=c.Id,
+            Name=c.Name,
+            Price=c.Price,
+            Picture=c.Picture,
+            Slug=c.Slug
+            }).ToListAsync();
+            var productDtos = mapper.Map<List<ProductIndexPageDetailDto>>(productsList);
+            return productDtos;
         }
 
         public async Task<int> InsertAsync(InsertProductDto entity, CancellationToken token, bool isSave = false)

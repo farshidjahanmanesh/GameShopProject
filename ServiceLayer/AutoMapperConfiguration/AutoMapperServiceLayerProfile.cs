@@ -20,6 +20,7 @@ namespace ServiceLayer.AutoMapperConfiguration
             CreateMap<RemoveProductDto, Product>();
             CreateMap<Product, UpdateProductDto>();
             CreateMap<UpdateProductDto, Product>();
+            CreateMap<Product, ProductIndexPageDetailDto>();
         }
     }
 }
